@@ -4,22 +4,35 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>تقييم تقارير الاستدامة — منهجية SWA v9</title>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;800&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #F0F4F9; }
-    textarea { font-family: Tajawal, sans-serif; }
-    input { font-family: Tajawal, sans-serif; }
-    button { font-family: Tajawal, sans-serif; }
+    body { background: #F0F4F9; font-family: Tajawal, sans-serif; }
+    #loading { position:fixed; inset:0; background:#0D2B52; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; }
+    #loading .dot { width:12px; height:12px; background:#00E5A0; border-radius:50%; animation:pulse 1s infinite; }
+    #loading p { color:#fff; margin-top:16px; font-size:14px; font-family:Tajawal,sans-serif; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+    textarea, input, button { font-family: Tajawal, sans-serif; }
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-thumb { background: #B0C8E0; border-radius: 99px; }
   </style>
 </head>
 <body>
+  <div id="loading">
+    <div class="dot"></div>
+    <p>جاري التحميل...</p>
+  </div>
   <div id="root"></div>
-  <script type="text/babel">
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script>
+    window.addEventListener('load', function() {
+      document.getElementById('loading').style.display = 'none';
+    });
+  </script>
+  <script type="text/babel" data-presets="react">
     const { useState, useEffect } = React;
 
 const SEEDS = [
@@ -817,38 +830,6 @@ function CompareChart({sorted, scores}){
 
 export default 
 
-function CompareChart({sorted, scores}){
-  const maxW = 280;
-  return (
-    <div style={{background:"#fff",borderRadius:14,padding:14,marginBottom:12}}>
-      <div style={{fontWeight:700,color:"#0D2B52",fontSize:13,marginBottom:12}}>الرسم البياني المقارن</div>
-      <div style={{display:"flex",flexDirection:"column",gap:6}}>
-        {sorted.map((org,idx)=>{
-          const sc = calc(scores[org.id].p1, scores[org.id].p2);
-          const lv = getLevel(sc.total);
-          const medal = idx===0?"🥇":idx===1?"🥈":idx===2?"🥉":"";
-          return(
-            <div key={org.id} style={{display:"flex",alignItems:"center",gap:6}}>
-              <div style={{fontSize:12,width:18,flexShrink:0}}>{medal||<span style={{fontSize:9,color:"#999"}}>{idx+1}</span>}</div>
-              <div style={{fontSize:10,color:"#0D2B52",width:110,flexShrink:0,textAlign:"right",fontWeight:600}}>{org.flag} {org.name.length>12?org.name.substring(0,12)+"…":org.name}</div>
-              <div style={{flex:1,background:"#F0F4F9",borderRadius:99,height:18,overflow:"hidden",position:"relative"}}>
-                <div style={{width:(sc.total)+"%",height:"100%",background:lv.color,borderRadius:99,transition:"width 0.5s",display:"flex",alignItems:"center",justifyContent:"flex-end",paddingRight:6}}>
-                  {sc.total>30 && <span style={{fontSize:9,color:"#fff",fontWeight:700}}>{sc.total}</span>}
-                </div>
-              </div>
-              <div style={{fontSize:10,fontWeight:800,color:lv.color,width:32,textAlign:"center",flexShrink:0}}>{sc.score5}</div>
-            </div>
-          );
-        })}
-      </div>
-      <div style={{display:"flex",justifyContent:"space-between",marginTop:8,paddingTop:6,borderTop:"1px solid #E8EDF2"}}>
-        <span style={{fontSize:9,color:"#999"}}>0</span>
-        <span style={{fontSize:9,color:"#999"}}>الدرجة من 100 | النتيجة من 5</span>
-        <span style={{fontSize:9,color:"#999"}}>100</span>
-      </div>
-    </div>
-  );
-}
 
 function App(){
   const initOrgs = SEEDS.map(s=>({id:s.id,name:s.name,flag:s.flag,country:s.country}));
@@ -1287,7 +1268,7 @@ function App(){
 
 
     const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
+    root.render(React.createElement(App));
   </script>
 </body>
 </html>
